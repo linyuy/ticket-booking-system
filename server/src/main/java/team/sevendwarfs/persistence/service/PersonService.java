@@ -1,38 +1,56 @@
 package team.sevendwarfs.persistence.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team.sevendwarfs.persistence.entities.Movie;
+import team.sevendwarfs.persistence.dao.PersonDao;
 import team.sevendwarfs.persistence.entities.Person;
 
 import java.util.List;
 
 /**
- * Created by deng on 2017/4/28.
+ * Created by deng on 2017/4/25.
  */
-public interface PersonService {
-    // 增
-    @Transactional
-    void create(Person person);
+@Service
+@Transactional
+public class PersonService {
+    @Autowired
+    private PersonDao dao;
 
-    // 删
-    @Transactional
-    void delete(Integer id);
-    @Transactional
-    void delete(Person person);
+    /**
+     * Instantiates a new Person service.
+     */
+    public PersonService() {
+        super();
+    }
 
-    // 改
-    @Transactional
-    Person update(Person person);
+    /**
+     * Create.
+     *
+     * @param entity the entity
+     */
+// API
+    public void create(final Person entity) {
+        this.dao.create(entity);
+    }
 
-    // 查
-    @Transactional(readOnly = true)
-    Person findById(Integer id);
-    @Transactional(readOnly = true)
-    List<Person> findByName(String name);
-    @Transactional(readOnly = true)
-    List<Person> findByType(String type);
-    @Transactional(readOnly = true)
-    List<Person> findByMovie(Movie movie);
-    @Transactional
-    List<Person> findAll();
+    /**
+     * Find one person.
+     *
+     * @param id the id
+     * @return the person
+     */
+    public Person findOne(final Integer id) {
+        return this.dao.findOne(id);
+    }
+
+    /**
+     * Find all list.
+     *
+     * @return the list
+     */
+    public List<Person> findAll() {
+        return this.dao.findAll();
+    }
+
 }
