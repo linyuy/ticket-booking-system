@@ -4,7 +4,6 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -12,10 +11,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -23,9 +20,9 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 配置类, 配置文件为: application.properties
@@ -33,9 +30,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * Created by deng on 2017/4/23.
  */
 @Configurable
-@ComponentScan({ "team.sevendwarfs.persistence", "team.sevendwarfs.web.controller" })
-@EnableTransactionManagement
+@ComponentScan({ "team.sevendwarfs.persistence", "team.sevendwarfs.web" +
+        ".controller" })
 @PropertySource({"classpath:application.properties"})
+@Import(SpringWebMvcConfigurer.class)
 public class SpringConfiguration {
     private static final String HIBERNATEDIALECT = "hibernate.dialect";
     private static final String HIBERNATESHOWSQL = "hibernate.show_sql";
@@ -69,7 +67,7 @@ public class SpringConfiguration {
     @Autowired
     private Environment env;
 
-    @Bean
+    @Bean(name = "dataSource")
     @Primary
     public DataSource dataSource() throws PropertyVetoException {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
@@ -93,6 +91,7 @@ public class SpringConfiguration {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setPackagesToScan(env.getRequiredProperty(HIBERNATEPACKAGESCAN));
+        // 设置完属性之后需要调用 afterPropertiesSet方法使配置生效
         sessionFactoryBean.setHibernateProperties(hibProperties());
         sessionFactoryBean.afterPropertiesSet();
         return sessionFactoryBean;
@@ -111,13 +110,12 @@ public class SpringConfiguration {
             (DataSource dataSource) {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan(env.getRequiredProperty(HIBERNATEPACKAGESCAN));
-
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
+        em.setPackagesToScan(env.getRequiredProperty(HIBERNATEPACKAGESCAN));
+        // 设置完属性之后需要调用 afterPropertiesSet方法使配置生效
         em.setJpaProperties(hibProperties());
         em.afterPropertiesSet();
-
         return em;
     }
 
@@ -128,7 +126,20 @@ public class SpringConfiguration {
         return transactionManager;
     }
 
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
+    }
 
+    @Bean
+    public FilterRegistrationBean registerOpenEntityManagerInViewFilterBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        OpenEntityManagerInViewFilter filter = new OpenEntityManagerInViewFilter();
+        registrationBean.setFilter(filter);
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(5);
+        return registrationBean;
+    }
 
 
     private Properties hibProperties() {

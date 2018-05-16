@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import team.sevendwarfs.SpringConfiguration;
+import team.sevendwarfs.Application;
 import team.sevendwarfs.persistence.entities.Movie;
 import team.sevendwarfs.persistence.entities.Person;
 
@@ -23,7 +24,8 @@ import java.util.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = SpringConfiguration.class)
+@SpringBootTest(classes = {SpringConfiguration.class,
+                            Application.class})
 public class PersistenceEntitiesTest {
     @Autowired
     private DataSource dataSource;
@@ -66,16 +68,7 @@ public class PersistenceEntitiesTest {
     @Test
     public void hibernateMappingRelationTest() {
         Movie caribbean = session.get(Movie.class, 3);
-        List<Person> actors = caribbean.getActors();
-        for (Person person : actors) {
-            System.out.println(person);
-        }
-
-        Person depp = session.get(Person.class, 1);
-        List<Movie> movies = depp.getMoives();
-        for (Movie movie : movies) {
-            System.out.println(movie);
-        }
+        System.out.print(caribbean);
     }
 
     /**

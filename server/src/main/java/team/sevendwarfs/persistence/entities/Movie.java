@@ -1,5 +1,8 @@
 package team.sevendwarfs.persistence.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
@@ -38,16 +41,29 @@ public class Movie implements Serializable {
     private String url;
 
     // 上映时间
+    @Temporal(TemporalType.DATE)
     @Column(name = "release_date")
     private Date releaseDate;
 
+    // 评分
+    @Column(name = "rating")
+    private String rating;
+
+    // 所属国家
+    @Column(name = "country")
+    private String country;
+
+    // 上映地点
+    @Column(name = "show_place")
+    private String showPlace;
+
     // 电影简介
-    @Column(name = "introduction")
+    @Column(name = "introduction", length = 1000)
     private String introduction;
 
     /**
      * 电影人
-     * 执行双向多对多关联映射关系
+     * 执行单向多对多关联映射关系
      * @JoinTable: name: 中间表名
      *             joinColumns: 我方在中间表的外键
      *             inverseJoinColumns: 对方在中间表的外键
@@ -59,7 +75,12 @@ public class Movie implements Serializable {
             joinColumns = @JoinColumn(name = "mid"),
             inverseJoinColumns = @JoinColumn(name = "pid")
     )
-    private List<Person> moviers;
+    @JsonIgnore
+    private List<Person> moviers = new LinkedList<Person>();
+
+    // 海报图集
+    @OneToMany(mappedBy = "movie")
+    private List<MoviePicture> pictures = new LinkedList<>();
 
     // 演员名单
     @Transient
@@ -67,6 +88,86 @@ public class Movie implements Serializable {
 
     @Transient
     private List<Person> directors;
+
+    public Movie() {}
+
+    public Movie(String chineseName, String englishName, String type, String length, String url, Date releaseDate, String introduction) {
+        this.chineseName = chineseName;
+        this.englishName = englishName;
+        this.type = type;
+        this.length = length;
+        this.url = url;
+        this.releaseDate = releaseDate;
+        this.introduction = introduction;
+    }
+
+    public Movie(String chineseName, String englishName, String type, String length, String url, Date releaseDate, String introduction, List<Person> moviers) {
+        this.chineseName = chineseName;
+        this.englishName = englishName;
+        this.type = type;
+        this.length = length;
+        this.url = url;
+        this.releaseDate = releaseDate;
+        this.introduction = introduction;
+        this.moviers = moviers;
+    }
+
+    public Movie(String chineseName, String englishName, String type, String length, String url, Date releaseDate, String rating, String country, String showPlace, String introduction, List<Person> moviers, List<MoviePicture> pictures, List<Person> actors, List<Person> directors) {
+        this.chineseName = chineseName;
+        this.englishName = englishName;
+        this.type = type;
+        this.length = length;
+        this.url = url;
+        this.releaseDate = releaseDate;
+        this.rating = rating;
+        this.country = country;
+        this.showPlace = showPlace;
+        this.introduction = introduction;
+        this.moviers = moviers;
+        this.pictures = pictures;
+        this.actors = actors;
+        this.directors = directors;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getShowPlace() {
+        return showPlace;
+    }
+
+    public void setShowPlace(String showPlace) {
+        this.showPlace = showPlace;
+    }
+
+    public List<MoviePicture> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<MoviePicture> pictures) {
+        this.pictures = pictures;
+    }
+
+    public void setActors(List<Person> actors) {
+        this.actors = actors;
+    }
+
+    public void setDirectors(List<Person> directors) {
+        this.directors = directors;
+    }
 
     public List<Person> getActors() {
         if (this.actors == null) {
@@ -87,7 +188,7 @@ public class Movie implements Serializable {
                 { this.directors.add(person); }
             }
         }
-        return this.actors;
+        return this.directors;
     }
 
 
@@ -163,17 +264,19 @@ public class Movie implements Serializable {
         this.moviers = moviers;
     }
 
+
     @Override
-    public String toString() {
-        return "Movie{" +
-                "id=" + id +
-                ", chineseName='" + chineseName + '\'' +
-                ", englishName='" + englishName + '\'' +
-                ", type='" + type + '\'' +
-                ", length='" + length + '\'' +
-                ", url='" + url + '\'' +
-                ", releaseDate=" + releaseDate +
-                ", introduction='" + introduction + '\'' +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Movie)) return false;
+
+        Movie movie = (Movie) o;
+
+        return getId().equals(movie.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }
