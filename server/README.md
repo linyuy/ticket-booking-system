@@ -14,3 +14,6 @@ localhost:8082/
 
 #### API
 遵循 RESTful 原则，如`/api/user`。
+
+## Reference
+[SevenDwarfs](https://github.com/SevenDwarfs/WebService)
