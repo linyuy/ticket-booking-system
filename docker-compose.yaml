@@ -1,15 +1,3 @@
-# ticket-booking-system
-互联网电影票售票系统
-
-### 概述
- - front-end 目录存放前端项目，利用 VUE 框架
- - back-end 目录存放后端项目，利用 Spring 框架
- - persistence-layer 目录存在数据库配置，利用 MySQL 数据库
-
-
-### 部署
-物理架构云上部署 [dock-compose.yml](./docker-compose.yaml) 文件编写与使用(容器编排)如下：
-```yaml
 version: '3'
 services:
   nginx:
@@ -49,6 +37,3 @@ services:
     command: mvn clean spring-boot:run
     depends_on:
       - mysql
-
-```
-

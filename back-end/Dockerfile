@@ -4,7 +4,7 @@ RUN git clone https://github.com/system-analysis-and-design/ticket-booking-syste
 
 FROM maven:3.5-jdk-8-alpine as build
 WORKDIR /app
-COPY --from=clone /app/ticket-booking-system/server /app
+COPY --from=clone /app/ticket-booking-system/back-end /app
 RUN mvn package
 
 FROM openjdk:8-jre-alpine
