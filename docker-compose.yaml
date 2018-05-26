@@ -1,29 +1,29 @@
 version: '3'
 services:
   nginx:
-   container_name: proxy
-   image: nginx:1.14
-   restart: always
-   ports:
-   - 80:80
-   - 443:443
-   volumes:
-   - ./nginx/conf.d:/etc/nginx/conf.d
-  depends_on:
-    - front_ent
+    container_name: proxy
+    image: nginx:1.14
+    restart: always
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - front_end
   
-  front_ent:
-   container_name: front-ent
-   build: ./front-ent
-   volumes:
-   - ./www:/www
+  front_end:
+    container_name: front-end
+    build: ./front-end
+    volumes:
+      - ./www:/www
 
   mysql:
-   container_name: database
-   build: ./back-end
-   ports:
-   - "3306:3306"
-   restart: always
+    container_name: database
+    build: ./back-end
+    ports:
+      - "3306:3306"
+    restart: always
 
   app:
     restart: always
