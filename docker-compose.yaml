@@ -5,7 +5,7 @@ services:
     image: nginx:1.14
     restart: always
     ports:
-    - 80:80
+    - 8081:80
     - 443:443
     volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
@@ -20,14 +20,16 @@ services:
 
   mysql:
     container_name: database
-    build: ./back-end
+    build: ./persistence-layer
     ports:
       - "3306:3306"
     restart: always
 
   app:
     restart: always
-    build: ./back-end
+    build:
+      context: ./back-end
+      dockerfile: ./back-end/Dockerfile-compose
     working_dir: /app
     volumes:
       - ./app:/app

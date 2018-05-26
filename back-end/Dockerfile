@@ -11,4 +11,4 @@ FROM openjdk:8-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/movie-booking.war /app
 EXPOSE 8082
-CMD ["java -jar movie-booking.war"]
+CMD ["java -jar /app/movie-booking.war"]

@@ -3,7 +3,6 @@ WORKDIR /app
 RUN git clone https://github.com/system-analysis-and-design/ticket-booking-system.git
 
 FROM mysql:5.7
-WORKDIR /db-server
+WORKDIR /app
 COPY --from=clone /app/ticket-booking-system/persistence-layer /app
-
-CMD ["sh", "sql/init_data.sh"]
+CMD ["sh /app/sql/init_data.sh /app/sql/init_data.sql"]
