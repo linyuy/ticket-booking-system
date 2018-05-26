@@ -29,7 +29,7 @@ services:
     restart: always
     build:
       context: ./back-end
-      dockerfile: ./back-end/Dockerfile-compose
+      dockerfile: Dockerfile-compose
     working_dir: /app
     volumes:
       - ./app:/app
