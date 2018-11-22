@@ -1,0 +1,7 @@
+FROM mysql:5.7
+COPY ./ /app
+
+WORKDIR /app
+EXPOSE 3306
+CMD ["sh", "/app/sql/init_data.sh", "/app/sql/init_data.sql"]
+

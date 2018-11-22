@@ -1,6 +1,6 @@
 FROM alpine/git as clone
 WORKDIR /app
-RUN git clone https://github.com/system-analysis-and-design/ticket-booking-system.git
+RUN git clone --depth=1 https://github.com/system-analysis-and-design/ticket-booking-system.git
 
 FROM node:8.11 as build
 WORKDIR /app

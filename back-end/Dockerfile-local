@@ -1,0 +1,15 @@
+FROM maven:3.5-jdk-8-alpine as build
+COPY ./ /app
+
+WORKDIR /app
+# RUN mvn package
+
+# FROM openjdk:8-jre-alpine
+# WORKDIR /app
+# COPY --from=build /app/target/movie-booking.war /app
+EXPOSE 8082
+# CMD ["java -jar /app/movie-booking.war"]
+
+# CMD sleep 30s && mvn clean spring-boot:run
+CMD ["mvn", "clean", "spring-boot:run"]
+

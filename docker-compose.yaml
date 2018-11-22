@@ -5,38 +5,53 @@ services:
     image: nginx:1.14
     restart: always
     ports:
-      - 8081:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - static-content:/www
+      # - ./www:/www
     depends_on:
       - html
-  
+      - app
+
   html:
     container_name: html_container
-    build: ./front-end
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile-local
     volumes:
-      - ./www:/www
+      - static-content:/www
+      # - ./www:/www
 
-  mysql:
+  db:
     container_name: mysql_container
-    build: ./persistence-layer
+    build:
+      context: ./persistence-layer
+      dockerfile: Dockerfile-local
     restart: always
-    ports:
-      - "3306:3306"
+    expose:
+      - "3306"
+    # ports:
+      # - "3306:3306"
 
   app:
     container_name: app_container
     build:
       context: ./back-end
-      dockerfile: Dockerfile-compose
-    working_dir: /app
+      dockerfile: Dockerfile-local
     restart: always
     volumes:
-      - ./app:/app
       - ~/.m2:/root/.m2
+    # extra_hosts:
+      # - "db:127.0.0.1"
+    # ports:
+      # - "8082:8082"
     expose:
       - "8082"
-    command: mvn clean spring-boot:run
     depends_on:
-      - mysql
+      - db
+
+volumes:
+  static-content:
+
