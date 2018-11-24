@@ -33,6 +33,7 @@ services:
       context: ./front-end
       dockerfile: Dockerfile-local
     volumes:
+      - ~/.npm:/root/.npm
       - static-content:/www
       # - ./www:/www
 

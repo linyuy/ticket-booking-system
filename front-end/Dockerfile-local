@@ -2,7 +2,17 @@ FROM node:8.10 as build
 COPY ./ /app
 
 WORKDIR /app
+
+RUN echo "echo 2.1.1" > phantomjs
+RUN chmod +x ./phantomjs
+RUN mv ./phantomjs /usr/bin/
+# RUN echo "echo 'ChromeDriver 2.44.609551 (5d576e9a44fe4c5b6a07e568f1ebc753f1214634)'" > chromedriver
+# RUN chmod +x ./chromedriver
+# RUN mv ./chromedriver /usr/bin/
+RUN phantomjs -v
+
+RUN mkdir -p /www
+
 # RUN npm config set registry https://registry.npm.taobao.org && npm config get registry
-RUN npm install && npm run build
-COPY ./dist/ /www
-CMD ["tail", "-f", "/var/log/faillog"]
+CMD npm install && npm run build && cp -rf ./dist/* /www && ls -R /www
+# CMD ["tail", "-f", "/var/log/faillog"]
