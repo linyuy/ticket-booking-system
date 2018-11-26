@@ -15,4 +15,5 @@ RUN ls -R ./dist
 RUN cp -rf ./dist/* /www
 RUN ls -R /www
 WORKDIR /www
-CMD ["tail", "-f", "/var/log/faillog"]
+# CMD ["tail", "-f", "/var/log/faillog"]
+CMD cp -rf /app/dist/* /www && ls -R /www
