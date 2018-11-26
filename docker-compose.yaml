@@ -19,7 +19,7 @@ services:
     container_name: html_container
     build:
       context: ./front-end
-      dockerfile: Dockerfile-local
+      dockerfile: Dockerfile
     volumes:
       - ~/.npm:/root/.npm
       - static-content:/www
@@ -48,6 +48,7 @@ services:
       # - "db:127.0.0.1"
     # ports:
       # - "8082:8082"
+    # command: sh -c "sleep 30s && mvn clean spring-boot:run"
     expose:
       - "8082"
     depends_on:
