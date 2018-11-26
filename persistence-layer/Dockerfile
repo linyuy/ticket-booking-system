@@ -6,4 +6,7 @@ FROM mysql:5.7
 WORKDIR /app
 COPY --from=clone /app/ticket-booking-system/persistence-layer /app
 EXPOSE 3306
-CMD ["sh", "/app/sql/init_data.sh", "/app/sql/init_data.sql"]
+
+RUN sh /app/sql/init_data.sh /app/sql/init_data.sql
+CMD service mysql restart && tail -f /var/log/mysql/error.log
+# CMD ["sh", "/app/sql/init_data.sh", "/app/sql/init_data.sql"]
